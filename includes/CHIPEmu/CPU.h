@@ -106,9 +106,9 @@ struct CPU
 typedef void (*CH8F)();
 
 CH8F table[0xF + 1];
-CH8F table0[0xE + 1];
-CH8F table8[0xE + 1];
-CH8F tableE[0xE + 1];
+CH8F table0[0xF + 1];
+CH8F table8[0xF + 1];
+CH8F tableE[0xF + 1];
 CH8F tableF[0x65 + 1];
 
 static struct CPU CHIP8; // CHIP-8
