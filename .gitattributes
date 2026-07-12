@@ -1,0 +1,7 @@
+# Some of the stuff that I didn't create so I don't need them counted as my code
+includes/glad/* linguist-vendored
+includes/GLFW/* linguist-vendored
+includes/imgui/* linguist-vendored
+includes/KHR/* linguist-vendored
+includes/miniaudio/* linguist-vendored
+includes/PortableFileDialogs/* linguist-vendored
