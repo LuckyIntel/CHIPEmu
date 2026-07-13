@@ -43,6 +43,7 @@
 #define APP_MINIMUM_WIDTH 800
 #define APP_MINIMUM_HEIGHT 600
 #define DEFAULT_CYCLE_DELAY 3 // Default delay
+#define DELAY_FACTOR 0.001f // Delay factor
 
 static int APP_WIDTH = APP_MINIMUM_WIDTH;
 static int APP_HEIGHT = APP_MINIMUM_HEIGHT;
@@ -54,6 +55,7 @@ static GLFWwindow* window; // Window Pointer
 static unsigned int sProg; // Shader Program
 static unsigned int VAO, VBO, EBO; // Vertex Arrays, Buffers and Element Buffer
 static unsigned int screenTexture; // Screen Texture ( the texture that carries our CHIP-8 buffers )
+static float RENDERER_CLEAR_COLOR[3] = {0.0f, 0.0f, 0.0f}; // Color handler
 
 const float RECT_VERTICES[] = { 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 0.0f, 1.0f, -1.0f, 1.0f, 0.0f, 0.0f }; // Rectangle Vertices and Texture Coordinations
 const unsigned int RECT_INDICES[] = { 0, 1, 3, 1, 2, 3 }; // Rectangle Indices
@@ -140,16 +142,11 @@ int initRenderer()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     
-    /*
-        No need to set screenTexture as our first texture, OpenGL
-        drivers automatically use the first texture available.
-
-        Minimized CPU overhead.
-    */
-    //glUniform1i(glGetUniformLocation(sProg, "screenTexture"), 0);
-
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(RENDERER_CLEAR_COLOR[0], RENDERER_CLEAR_COLOR[1], RENDERER_CLEAR_COLOR[2], 1.0f);
     glViewport(0, 0, APP_WIDTH, APP_HEIGHT);
+
+    glEnable(GL_BLEND); // Adding transparency support for customization
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     return 1;
 };

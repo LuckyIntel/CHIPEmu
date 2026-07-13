@@ -20,3 +20,5 @@
 <h2 align="center">Eklenecekler</h2>
 
 ### Çok bir şey eksik değil ama kendim de şu temadan rahatsızım yakında belki tema falan eklerim. Duruma göre başka şeyler de ekleyeceğim ama şuanlık amacım bu kadar.
+### Ölçeklendirme ayarlarını düzeltmek.
+### CMake düzeltmek.

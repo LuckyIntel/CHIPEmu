@@ -74,6 +74,7 @@ int main()
     double deltaTime;
     double acc;
     double timerAcc;
+    float target;
 
     while (shouldRender())
     {
@@ -83,8 +84,7 @@ int main()
         lastTime = currentTime;
         acc += deltaTime;
         timerAcc += deltaTime;
-
-        float target = CYCLE_DELAY / 1000.0f;
+        target = CYCLE_DELAY * DELAY_FACTOR;
         
         while (acc >= target) { CHIP8CYCLE(); acc -= target; };
         while (timerAcc >= 0.016666668f) { CHIP8TIMERCYCLE(); timerAcc -= 0.016666668f; };

@@ -43,6 +43,8 @@
 
 #define FONT_SIZE 80 // Font size
 
+static uint32_t VIDEO_PRIMARY_COLOR = 0xFFFFFFFF;
+
 /*
     8-Bit Fontset, see Tobias' blog for more explaination:
     https://tobiasvl.github.io/blog/write-a-chip-8-emulator/
@@ -346,15 +348,15 @@ void OP_DXYN()
 
     for (unsigned int row = 0; row < height; ++row)
     {
-        //if (y + row >= VIDEO_HEIGHT_SIZE) break;
+        if (y + row >= VIDEO_HEIGHT_SIZE) break;
         uint8_t byte = CHIP8.MEMORY[CHIP8.I + row];
 
         for (unsigned int col = 0; col < 8; ++col)
         {
-            //if (x + col >= VIDEO_WIDTH_SIZE) break;
+            if (x + col >= VIDEO_WIDTH_SIZE) break;
             
             uint32_t* pixel = &CHIP8.VIDEO_BUFFER[(y + row) * VIDEO_WIDTH_SIZE + (x + col)];
-            if (byte & (0x80u >> col)) { if (*pixel == 0xFFFFFFFF) { CHIP8.V_REG[0xF] = 1; }; *pixel ^= 0xFFFFFFFF; };
+            if (byte & (0x80u >> col)) { if (*pixel == VIDEO_PRIMARY_COLOR) { CHIP8.V_REG[0xF] = 1; }; *pixel ^= VIDEO_PRIMARY_COLOR; };
         };
     };
 };

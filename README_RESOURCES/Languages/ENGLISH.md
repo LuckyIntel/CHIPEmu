@@ -20,3 +20,5 @@
 <h2 align="center">Eklenecekler</h2>
 
 ### Alot of stuff is actually implemented but I am kinda annoyed by the theme so I might add a new theme that you can change in the left-hand menu. Will add other stuff depending on the need.
+### Fix scaling of the renderer.
+### Fix CMake.

@@ -2,6 +2,9 @@
 # Added:
 #   Fix for Windows and Linux libraries
 #   Set default CMAKE_BUILD_TYPE to Release
+#
+# Please IGNORE building for LINUX for now. I will fix it in the later updates.
+# Building for Windows however works. I will fix some stuff here too.
 cmake_minimum_required(VERSION 3.13) # Updated the version to 3.13 because some CMake functions require 3.13
 project(CHIPemu VERSION 1.0)
 
@@ -29,15 +32,25 @@ target_include_directories(CHIPEmu PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/includes)
 
 if (WIN32)
     target_link_libraries(CHIPEmu PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/libglfw3.a gdi32)
-    target_link_options(CHIPEmu PRIVATE -static-libgcc -static-libstdc++ -static)
+    target_link_options(CHIPEmu PRIVATE -static-libgcc -static-libstdc++)
 else()
     find_package(Threads REQUIRED)
-    find_library(GLFW_STATIC_LIB NAMES libglfw3.a glfw3)
+    find_library(GLFW_STATIC_LIB 
+        NAMES libglfw3.a glfw3
+        PATHS ${CMAKE_CURRENT_SOURCE_DIR}/lib
+        NO_DEFAULT_PATH
+    )
 
     if(GLFW_STATIC_LIB)
         target_link_libraries(CHIPEmu PRIVATE ${GLFW_STATIC_LIB} GL X11 pthread rt m dl Threads::Threads)
     else()
+        # Trying to CONVINCE THE SYSTEM THAT WE ACTUALLY HAVE THE GLFW AS A STATIC LIBRARY.
+        # ( I hate CMake )
         find_package(glfw3 REQUIRED)
-        target_link_libraries(CHIPEmu PRIVATE glfw)
+        if(TARGET glfw::glfw)
+            target_link_libraries(CHIPEmu PRIVATE glfw::glfw)
+        else()
+            target_link_libraries(CHIPEmu PRIVATE glfw)
+        endif()
     endif()
 endif()

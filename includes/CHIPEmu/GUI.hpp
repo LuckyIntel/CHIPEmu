@@ -18,11 +18,12 @@
 #include <algorithm>
 #include <string>
 #include "CPU.h" // CHIP-8 Code (we require loadFromCH8File function)
-#include "Renderer.h" // OpenGL 3.3 + GLFW (necessary for window)
-#define IMGUI_WINDOW_WIDTH 250.0f
+#include "Renderer.h" // OpenGL 3.3 + GLFW (necessary for window and RENDERER_CLEAR_COLOR)
+#define IMGUI_WINDOW_WIDTH 300.0f
 
 static ImGuiViewport* viewport;
 static int GUI_SHOULD_RENDER = 1;
+static float IMGUI_VIDEO_COLOR_HANDLER[3] = {1.0f, 1.0f, 1.0f};
 
 static pfd::open_file* PFD_SESSION = nullptr;
 
@@ -65,6 +66,7 @@ void setGUI()
     if (ImGui::Begin("CHIPEmu Properties", 0, window_specs))
     {
         ImGui::Text("CHIPEmu - A CHIP-8 Emulator");
+        ImGui::Text("Emulator Options");
         if (ImGui::Button("Load a ROM") && PFD_SESSION == nullptr)
         {
             PFD_SESSION = new pfd::open_file(
@@ -72,8 +74,16 @@ void setGUI()
                 ".",
                 {"CHIP-8 Files (.ch8)", "*.ch8"}
             );
-        }
+        };
         ImGui::SliderInt("CycleDelay", &CYCLE_DELAY, 1, 8, "Cycle Delay: %d");
+        ImGui::ColorEdit3("Back Color", RENDERER_CLEAR_COLOR);
+        ImGui::ColorEdit3("Video Render Color", IMGUI_VIDEO_COLOR_HANDLER);
+        if(ImGui::Button("Apply Color Settings (Resets Emulator)"))
+        {
+            glClearColor(RENDERER_CLEAR_COLOR[0], RENDERER_CLEAR_COLOR[1], RENDERER_CLEAR_COLOR[2], 1.0f);
+            VIDEO_PRIMARY_COLOR = ImGui::ColorConvertFloat4ToU32(ImVec4(IMGUI_VIDEO_COLOR_HANDLER[0], IMGUI_VIDEO_COLOR_HANDLER[1], IMGUI_VIDEO_COLOR_HANDLER[2], 1.0f));
+            initCHIP8();
+        };
         
         if (PFD_SESSION && PFD_SESSION->ready())
         {
