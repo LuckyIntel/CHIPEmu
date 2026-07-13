@@ -17,7 +17,7 @@
 
 ### Linux users, you need `CMake`, `GCC`, `OpenGL Tools` and `GLFW Developer Tools` installed in your terminal! I will not explain how to install them because they are pretty much explained anywhere, we will straight just compile the code. Open your terminal and go to the CHIPEmu project folder, create a build folder with `mkdir build`, then write `cmake ..` If it succeeds without any errors proceed with: `cmake --build .` Your CHIPEmu file should be inside the build directory. You can type `chmod +x CHIPEmu` in your terminal to grant the application executable perms then write `./CHIPEmu` to start the application.
 
-<h2 align="center">Eklenecekler</h2>
+<h2 align="center">To Be Added</h2>
 
 ### Alot of stuff is actually implemented but I am kinda annoyed by the theme so I might add a new theme that you can change in the left-hand menu. Will add other stuff depending on the need.
 ### Fix scaling of the renderer.
