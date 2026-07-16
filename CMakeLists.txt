@@ -1,22 +1,26 @@
-# I REMADE THE CMAKE BECAUSE IT SIMPLY HAD ALOT OF PROBLEMS
-# Added:
-#   Fix for Windows and Linux libraries
-#   Set default CMAKE_BUILD_TYPE to Release
-#
-# Please IGNORE building for LINUX for now. I will fix it in the later updates.
-# Building for Windows however works. I will fix some stuff here too.
-cmake_minimum_required(VERSION 3.13) # Updated the version to 3.13 because some CMake functions require 3.13
-project(CHIPemu VERSION 1.0)
+# COMPLETE CMAKE OVERHAUL
+# Old CMake had GLFW problems so I fixed it. Kinda.
+# Compilation will work the same-old way.
 
+cmake_minimum_required(VERSION 3.14)
+project(CHIPEmu VERSION 1.0 LANGUAGES C CXX)
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release CACHE STRING "Default is Release, please specify if you want to compile as Debug." FORCE)
 endif()
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON) # I don't know what I was thinking while coding this part
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(CHIPEmu
+if(WIN32)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-libgcc -static-libstdc++ -static")
+    set(GLFW_LIB_FILE "${CMAKE_CURRENT_SOURCE_DIR}/lib/libglfw3.a")
+    add_library(local_glfw STATIC IMPORTED)
+    set_target_properties(local_glfw PROPERTIES
+        IMPORTED_LOCATION "${GLFW_LIB_FILE}"
+    ) 
+endif()
+set(SRC_FILES
     main.cpp
     includes/glad/glad.c
     includes/imgui/imgui_draw.cpp
@@ -27,30 +31,25 @@ add_executable(CHIPEmu
     includes/imgui/imgui.cpp
 )
 
-target_include_directories(CHIPEmu PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/includes)
-#target_link_libraries(CHIPEmu PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/libglfw3.a) # Moved for linux support
+add_executable(${PROJECT_NAME} ${SRC_FILES})
+target_include_directories(${PROJECT_NAME} PRIVATE includes)
 
 if (WIN32)
-    target_link_libraries(CHIPEmu PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/libglfw3.a gdi32)
-    target_link_options(CHIPEmu PRIVATE -static-libgcc -static-libstdc++)
-else()
-    find_package(Threads REQUIRED)
-    find_library(GLFW_STATIC_LIB 
-        NAMES libglfw3.a glfw3
-        PATHS ${CMAKE_CURRENT_SOURCE_DIR}/lib
-        NO_DEFAULT_PATH
+    set_target_properties(${PROJECT_NAME} PROPERTIES WIN32_EXECUTABLE TRUE)
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+        local_glfw
+        opengl32
+        gdi32
+        comdlg32
+        ole32
+        uuid 
     )
-
-    if(GLFW_STATIC_LIB)
-        target_link_libraries(CHIPEmu PRIVATE ${GLFW_STATIC_LIB} GL X11 pthread rt m dl Threads::Threads)
-    else()
-        # Trying to CONVINCE THE SYSTEM THAT WE ACTUALLY HAVE THE GLFW AS A STATIC LIBRARY.
-        # ( I hate CMake )
-        find_package(glfw3 REQUIRED)
-        if(TARGET glfw::glfw)
-            target_link_libraries(CHIPEmu PRIVATE glfw::glfw)
-        else()
-            target_link_libraries(CHIPEmu PRIVATE glfw)
-        endif()
-    endif()
+elseif(UNIX AND NOT APPLE)
+    find_package(glfw3 REQUIRED)
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+        glfw    
+        GL
+        pthread
+        dl
+    )
 endif()
