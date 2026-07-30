@@ -18,7 +18,7 @@
 #include <algorithm>
 #include <string>
 #include "CPU.h" // CHIP-8 Code (we require loadFromCH8File function)
-#include "Renderer.h" // OpenGL 3.3 + GLFW (necessary for window and RENDERER_CLEAR_COLOR)
+#include "Renderer.h" // OpenGL 3.3 + GLFW (other necessary stuff like window)
 #define IMGUI_WINDOW_WIDTH 300.0f
 
 static ImGuiViewport* viewport;
@@ -84,7 +84,8 @@ void setGUI()
             VIDEO_PRIMARY_COLOR = ImGui::ColorConvertFloat4ToU32(ImVec4(IMGUI_VIDEO_COLOR_HANDLER[0], IMGUI_VIDEO_COLOR_HANDLER[1], IMGUI_VIDEO_COLOR_HANDLER[2], 1.0f));
             initCHIP8();
         };
-        
+        ImGui::Text("CHIPEmu - CPU Information");
+        ImGui::Text("Current opcode: 0x%0.4X", currentInstruction); // Added instruction reports to the GUI. %X is the placeholder of hexadecimals (letters in uppercase)
         if (PFD_SESSION && PFD_SESSION->ready())
         {
             std::vector<std::string> res = PFD_SESSION->result();

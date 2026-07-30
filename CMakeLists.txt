@@ -1,8 +1,17 @@
 # COMPLETE CMAKE OVERHAUL
 # Old CMake had GLFW problems so I fixed it. Kinda.
 # Compilation will work the same-old way.
+# Added generator checks for Windows users. MinGW is forced now.
 
 cmake_minimum_required(VERSION 3.14)
+
+if(WIN32)
+    if(NOT CMAKE_GENERATOR STREQUAL "MinGW Makefiles")
+        message(SEND_ERROR "You are a Windows user, please use cmake with MinGW Makefiles as your generator. Stopping CMake.")
+        return()
+    endif()
+endif()
+
 project(CHIPEmu VERSION 1.0 LANGUAGES C CXX)
 
 if(NOT CMAKE_BUILD_TYPE)

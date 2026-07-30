@@ -114,6 +114,7 @@ CH8F tableE[0xF + 1];
 CH8F tableF[0x65 + 1];
 
 static struct CPU CHIP8; // CHIP-8
+static uint16_t currentInstruction; // Stores the current instruction
 
 /*
     Reads a CH8 file then loads to memory.
@@ -568,7 +569,8 @@ void CHIP8CYCLE()
     CHIP8.opcode = (CHIP8.MEMORY[CHIP8.PC] << 8u) | CHIP8.MEMORY[CHIP8.PC + 1];
     CHIP8.PC += 2;
 
-    table[(CHIP8.opcode & 0xF000u) >> 12u]();
+    currentInstruction = CHIP8.opcode & 0xFFFFu;
+    table[(CHIP8.opcode & 0xF000u) >> 12]();
 };
 
 /*

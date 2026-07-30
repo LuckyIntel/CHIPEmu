@@ -65,10 +65,6 @@ int main()
     initGUI();
     interceptKeys(KEYBOARD_HANDLER);
 
-    //loadFromCH8File("Cave.ch8");
-    //loadFromCH8File("Soccer.ch8");
-    //loadFromCH8File("Breakout.ch8");
-
     double lastTime = getCurrentTime();
     double currentTime;
     double deltaTime;
@@ -78,7 +74,6 @@ int main()
 
     while (shouldRender())
     {
-        //printf("Cycle Delay: %d\n", CYCLE_DELAY);
         currentTime = getCurrentTime();
         deltaTime = currentTime - lastTime;
         lastTime = currentTime;
