@@ -59,11 +59,11 @@ int main()
     if (glfwJoystickPresent(0)) JOYSTICK_LISTENER(0, GLFW_CONNECTED);
 
     double lastTime = getCurrentTime();
-    double currentTime;
-    double deltaTime;
-    double acc;
-    double timerAcc;
-    float target;
+    double currentTime = 0;
+    double deltaTime = 0;
+    double acc = 0;
+    double timerAcc = 0;
+    float target = 0;
 
     while (shouldRender())
     {
@@ -74,8 +74,8 @@ int main()
         timerAcc += deltaTime;
         target = CYCLE_DELAY * DELAY_FACTOR;
         
-        while (acc >= target) { CHIP8CYCLE(); acc -= target; };
-        while (timerAcc >= 0.016666668f) { CHIP8TIMERCYCLE(); timerAcc -= 0.016666668f; };
+        while (acc >= target) { CHIP8CYCLE(); acc -= target; }
+        while (timerAcc >= 0.016666668f) { CHIP8TIMERCYCLE(); timerAcc -= 0.016666668f; }
 
         setGUI();
         rendererClearScreen();
