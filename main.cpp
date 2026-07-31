@@ -30,8 +30,6 @@
 #include "includes/CHIPEmu/Renderer.h" // GLFW + OpenGL 3.3 wrapper, simple yet works.
 
 int Joystick = -1;
-int JoystickHatsCount = 0;
-const unsigned char* JoystickHats = NULL;
 
 /*
     This is gonna be handled by our renderer's
@@ -126,7 +124,6 @@ void JOYSTICK_LISTENER(int jid, int event)
     if (event == GLFW_CONNECTED)
     {
         Joystick = jid;
-        JoystickHats = glfwGetJoystickHats(Joystick, &JoystickHatsCount);
     }
     else if (event == GLFW_DISCONNECTED)
     {
@@ -138,7 +135,6 @@ void JOYSTICK_HANDLER()
 {
     if (Joystick == -1) return;
     if (!glfwJoystickIsGamepad(Joystick)) return;
-    if (JoystickHatsCount == 0) return;
 
     GLFWgamepadstate state;
     if (glfwGetGamepadState(Joystick, &state))
