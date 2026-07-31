@@ -48,7 +48,7 @@ void initGUI()
     ImGui_ImplOpenGL3_Init("#version 330 core"); // GLSL 330 Core
 
     viewport = ImGui::GetMainViewport();
-};
+}
 
 /*
     Sets up GUI elements for the next render call.
@@ -74,7 +74,7 @@ void setGUI()
                 ".",
                 {"CHIP-8 Files (.ch8)", "*.ch8"}
             );
-        };
+        }
         ImGui::SliderInt("CycleDelay", &CYCLE_DELAY, 1, 8, "Cycle Delay: %d");
         ImGui::ColorEdit3("Back Color", RENDERER_CLEAR_COLOR);
         ImGui::ColorEdit3("Video Render Color", IMGUI_VIDEO_COLOR_HANDLER);
@@ -83,7 +83,7 @@ void setGUI()
             glClearColor(RENDERER_CLEAR_COLOR[0], RENDERER_CLEAR_COLOR[1], RENDERER_CLEAR_COLOR[2], 1.0f);
             VIDEO_PRIMARY_COLOR = ImGui::ColorConvertFloat4ToU32(ImVec4(IMGUI_VIDEO_COLOR_HANDLER[0], IMGUI_VIDEO_COLOR_HANDLER[1], IMGUI_VIDEO_COLOR_HANDLER[2], 1.0f));
             initCHIP8();
-        };
+        }
         ImGui::Text("CHIPEmu - CPU Information");
         ImGui::Text("Current opcode: 0x%0.4X", currentInstruction); // Added instruction reports to the GUI. %X is the placeholder of hexadecimals (letters in uppercase)
         if (PFD_SESSION && PFD_SESSION->ready())
@@ -91,14 +91,14 @@ void setGUI()
             std::vector<std::string> res = PFD_SESSION->result();
             //printf("%s", res[0].c_str());
 
-            if (!res.empty()) { initCHIP8(); loadFromCH8File(res[0].c_str()); };
+            if (!res.empty()) { initCHIP8(); loadFromCH8File(res[0].c_str()); }
                 
             delete PFD_SESSION;
             PFD_SESSION = nullptr;
-        };
+        }
         ImGui::End();
-    };
-};
+    }
+}
 
 /*
     Renders the GUI elements that have been set up
@@ -108,6 +108,6 @@ void renderGUI()
 {
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-};
+}
 
 #endif

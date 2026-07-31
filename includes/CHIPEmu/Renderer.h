@@ -68,7 +68,7 @@ void onResize(GLFWwindow* w, int width, int height)
 {
     APP_WIDTH = width; APP_HEIGHT = height;
     glViewport(0, 0, APP_WIDTH, APP_HEIGHT);
-};
+}
 
 /*
     Sets up OpenGL 3.3 and GLFW for use.
@@ -149,12 +149,16 @@ int initRenderer()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     return 1;
-};
+}
 
 /*
-    Evaluates glfwSetKeyCallback
+    Evaluates glfwSetKeyCallback and glfwSetJoystickCallback
 */
-void interceptKeys(GLFWkeyfun keyHandlerFunction) { glfwSetKeyCallback(window, keyHandlerFunction); };
+void interceptKeys(GLFWkeyfun keyHandlerFunction, GLFWjoystickfun joystickHandlerFunction) 
+{ 
+    glfwSetKeyCallback(window, keyHandlerFunction); 
+    glfwSetJoystickCallback(joystickHandlerFunction); 
+}
 
 /*
     Does the cleanup.
@@ -173,7 +177,7 @@ void terminateRenderer()
 
     glfwDestroyWindow(window);
     glfwTerminate();
-};
+}
 
 /*
     Checks if the context should render or not.
@@ -182,12 +186,12 @@ void terminateRenderer()
     TO CLOSE THE APP OR ANY OTHER APPLICATION SIDE
     ERRORS.
 */
-int shouldRender() { return !glfwWindowShouldClose(window); };
+int shouldRender() { return !glfwWindowShouldClose(window); }
 
 /*
     Clears the screen.
 */
-void rendererClearScreen() { glClear(GL_COLOR_BUFFER_BIT); };
+void rendererClearScreen() { glClear(GL_COLOR_BUFFER_BIT); }
 
 /*
     Updates the screen.
@@ -195,12 +199,12 @@ void rendererClearScreen() { glClear(GL_COLOR_BUFFER_BIT); };
     Listens to user based events like pressing the close button
     or pressing a keyboard key.
 */
-void rendererEvents() { glfwSwapBuffers(window); glfwPollEvents(); };
+void rendererEvents() { glfwSwapBuffers(window); glfwPollEvents(); }
 
 /*
     Gets the current time, returns glfwGetTime()
 */
-double getCurrentTime() { return glfwGetTime(); };
+double getCurrentTime() { return glfwGetTime(); }
 
 /*
     Submits our VIDEO_BUFFER from CHIP8 struct to here, creates an image
@@ -210,6 +214,6 @@ void renderScreen(void const* VIDEO_BUFFER)
 {
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 64, 32, GL_RGBA, GL_UNSIGNED_BYTE, VIDEO_BUFFER);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-};
+}
 
 #endif

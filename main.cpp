@@ -16,6 +16,12 @@
     if you get rid of the dear imgui wrapper
     (GUI.hpp) and manually load ROMs with the
     loadFromCH8File function.
+
+    I have added Joystick support thanks to
+    GLFW3. However only maximum of 1 controller
+    is being supported, you can't plug in an
+    another controller and expect to play it
+    with your friends and etc.
 */
 
 #include "includes/CHIPEmu/CPU.h" // CHIP-8 Code are in this file.
@@ -23,10 +29,68 @@
 #include "includes/CHIPEmu/GUI.hpp" // dear imgui wrapper.
 #include "includes/CHIPEmu/Renderer.h" // GLFW + OpenGL 3.3 wrapper, simple yet works.
 
+int Joystick = -1;
+int JoystickHatsCount = 0;
+const unsigned char* JoystickHats = NULL;
+
 /*
     This is gonna be handled by our renderer's
     interceptKeys function that relies on glfwSetKeyCallback
 */
+void KEYBOARD_HANDLER(GLFWwindow* w, int key, int scancode, int action, int mods);
+
+/*
+    This is also being handled by the interceptKeys function
+    relying on the glfwSetJosytickCallback
+*/
+void JOYSTICK_LISTENER(int jid, int event);
+
+/*
+    Works mostly the same as KEYBOARD_HANDLER
+*/
+void JOYSTICK_HANDLER();
+
+int main()
+{
+    initCHIP8();
+    initAudio();
+    initRenderer();
+    initGUI();
+    interceptKeys(KEYBOARD_HANDLER, JOYSTICK_LISTENER);
+
+    if (glfwJoystickPresent(0)) JOYSTICK_LISTENER(0, GLFW_CONNECTED);
+
+    double lastTime = getCurrentTime();
+    double currentTime;
+    double deltaTime;
+    double acc;
+    double timerAcc;
+    float target;
+
+    while (shouldRender())
+    {
+        currentTime = getCurrentTime();
+        deltaTime = currentTime - lastTime;
+        lastTime = currentTime;
+        acc += deltaTime;
+        timerAcc += deltaTime;
+        target = CYCLE_DELAY * DELAY_FACTOR;
+        
+        while (acc >= target) { CHIP8CYCLE(); acc -= target; };
+        while (timerAcc >= 0.016666668f) { CHIP8TIMERCYCLE(); timerAcc -= 0.016666668f; };
+
+        setGUI();
+        rendererClearScreen();
+        renderScreen(CHIP8.VIDEO_BUFFER);
+        renderGUI();
+        JOYSTICK_HANDLER();
+        rendererEvents();
+    }
+
+    terminateAudio();
+    terminateRenderer();
+}
+
 void KEYBOARD_HANDLER(GLFWwindow* w, int key, int scancode, int action, int mods)
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) { GUI_SHOULD_RENDER = !GUI_SHOULD_RENDER; };
@@ -54,43 +118,32 @@ void KEYBOARD_HANDLER(GLFWwindow* w, int key, int scancode, int action, int mods
         case GLFW_KEY_F: CHIP8.keypad[0xE] = cIF; break;
         case GLFW_KEY_V: CHIP8.keypad[0xF] = cIF; break; 
         default: break;
-    };
-};
+    }
+}
 
-int main()
+void JOYSTICK_LISTENER(int jid, int event)
 {
-    initCHIP8();
-    initAudio();
-    initRenderer();
-    initGUI();
-    interceptKeys(KEYBOARD_HANDLER);
-
-    double lastTime = getCurrentTime();
-    double currentTime;
-    double deltaTime;
-    double acc;
-    double timerAcc;
-    float target;
-
-    while (shouldRender())
+    if (event == GLFW_CONNECTED)
     {
-        currentTime = getCurrentTime();
-        deltaTime = currentTime - lastTime;
-        lastTime = currentTime;
-        acc += deltaTime;
-        timerAcc += deltaTime;
-        target = CYCLE_DELAY * DELAY_FACTOR;
-        
-        while (acc >= target) { CHIP8CYCLE(); acc -= target; };
-        while (timerAcc >= 0.016666668f) { CHIP8TIMERCYCLE(); timerAcc -= 0.016666668f; };
+        Joystick = jid;
+        JoystickHats = glfwGetJoystickHats(Joystick, &JoystickHatsCount);
+    }
+    else if (event == GLFW_DISCONNECTED)
+    {
+        Joystick = -1;
+    }
+}
 
-        setGUI();
-        rendererClearScreen();
-        renderScreen(CHIP8.VIDEO_BUFFER);
-        renderGUI();
-        rendererEvents();
-    };
+void JOYSTICK_HANDLER()
+{
+    if (Joystick == -1) return;
+    if (!glfwJoystickIsGamepad(Joystick)) return;
+    if (JoystickHatsCount == 0) return;
 
-    terminateAudio();
-    terminateRenderer();
-};
+    GLFWgamepadstate state;
+    if (glfwGetGamepadState(Joystick, &state))
+    {
+        CHIP8.keypad[4] = (state.axes[GLFW_GAMEPAD_AXIS_LEFT_X] < -0.5f) ? 1 : 0;
+        CHIP8.keypad[6] = (state.axes[GLFW_GAMEPAD_AXIS_LEFT_X] > 0.5f) ? 1 : 0;
+    }
+}

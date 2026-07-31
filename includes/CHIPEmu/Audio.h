@@ -20,7 +20,7 @@ void AUDIO_EVENT(ma_device* device, void* output, const void* input, ma_uint32 f
 {
     if (CHIP8.soundTimer > 0) ma_waveform_read_pcm_frames(&MINIAUDIO_WAVEFORM, output, frame, NULL);
     else memset(output, 0, frame * ma_get_bytes_per_frame(device->playback.format, device->playback.channels));
-};
+}
 
 /*
     Sets up the audio for CHIP-8 sounds.
@@ -49,10 +49,10 @@ int initAudio()
     settings.dataCallback = AUDIO_EVENT;
 
     if (ma_device_init(NULL, &settings, &MINIAUDIO_DEVICE) != MA_SUCCESS) return 0;
-    if (ma_device_start(&MINIAUDIO_DEVICE)) { ma_device_uninit(&MINIAUDIO_DEVICE); ma_waveform_uninit(&MINIAUDIO_WAVEFORM); return 0; };
+    if (ma_device_start(&MINIAUDIO_DEVICE)) { ma_device_uninit(&MINIAUDIO_DEVICE); ma_waveform_uninit(&MINIAUDIO_WAVEFORM); return 0; }
 
     return 1;
-};
+}
 
 /*
     Terminates MINIAUDIO_DEVICE and MINIAUDIO_WAVEFORM
@@ -61,6 +61,6 @@ void terminateAudio()
 {
     ma_device_uninit(&MINIAUDIO_DEVICE);
     ma_waveform_uninit(&MINIAUDIO_WAVEFORM);
-};
+}
 
 #endif

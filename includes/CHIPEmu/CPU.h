@@ -136,17 +136,17 @@ int loadFromCH8File(const char* filePath)
     rewind(file);
 
     char* buffer = (char*)malloc(fileSize * sizeof(char));
-    if (buffer == NULL) { fclose(file); return 0; };
+    if (buffer == NULL) { fclose(file); return 0; }
 
     fread(buffer, sizeof(char), fileSize, file);
     fclose(file);
 
-    for (size_t i = 0; i < fileSize; i++) { CHIP8.MEMORY[PROG_ST_ADD + i] = (unsigned char)buffer[i]; };
+    for (size_t i = 0; i < fileSize; i++) { CHIP8.MEMORY[PROG_ST_ADD + i] = (unsigned char)buffer[i]; }
 
     free(buffer);
 
     return 1;
-};
+}
 
 /*
     Instruct to clean the screen completely,
@@ -155,22 +155,22 @@ int loadFromCH8File(const char* filePath)
     to create a blank screen. It does not
     involve the OpenGL calls, it's independent.
 */
-void OP_00E0() { memset(CHIP8.VIDEO_BUFFER, 0, sizeof(CHIP8.VIDEO_BUFFER)); };
+void OP_00E0() { memset(CHIP8.VIDEO_BUFFER, 0, sizeof(CHIP8.VIDEO_BUFFER)); }
 
 /*
     Instructs to return back.
 */
-void OP_00EE() { CHIP8.PC = CHIP8.S[--CHIP8.SP]; };
+void OP_00EE() { CHIP8.PC = CHIP8.S[--CHIP8.SP]; }
 
 /*
     Jumps to an address.
 */
-void OP_1NNN() { CHIP8.PC = (CHIP8.opcode & 0x0FFFu); };
+void OP_1NNN() { CHIP8.PC = (CHIP8.opcode & 0x0FFFu); }
 
 /*
     Calls a function.
 */
-void OP_2NNN() { CHIP8.S[CHIP8.SP++] = CHIP8.PC; CHIP8.PC = (CHIP8.opcode & 0x0FFFu); };
+void OP_2NNN() { CHIP8.S[CHIP8.SP++] = CHIP8.PC; CHIP8.PC = (CHIP8.opcode & 0x0FFFu); }
 
 /*
     Skips to next instruction if Vx is equal to byte.
@@ -178,7 +178,7 @@ void OP_2NNN() { CHIP8.S[CHIP8.SP++] = CHIP8.PC; CHIP8.PC = (CHIP8.opcode & 0x0F
 void OP_3XKK()
 {
     if (CHIP8.V_REG[(CHIP8.opcode & 0x0F00u) >> 8u] == (CHIP8.opcode & 0x00FFu)) CHIP8.PC += 2;
-};
+}
 
 /*
     Skipts to next instruction if Vx is NOT equal to byte.
@@ -186,7 +186,7 @@ void OP_3XKK()
 void OP_4XKK()
 {
     if (CHIP8.V_REG[(CHIP8.opcode & 0x0F00u) >> 8u] != (CHIP8.opcode & 0x00FFu)) CHIP8.PC += 2;
-};
+}
 
 /*
     Skips to next instruction if Vx is equal to Vy.
@@ -194,7 +194,7 @@ void OP_4XKK()
 void OP_5XY0()
 {
     if (CHIP8.V_REG[(CHIP8.opcode & 0x0F00u) >> 8u] == CHIP8.V_REG[(CHIP8.opcode & 0x00F0u) >> 4u]) CHIP8.PC += 2;
-};
+}
 
 /*
     Assigns a byte to Vx.
@@ -202,7 +202,7 @@ void OP_5XY0()
 void OP_6XKK()
 {
     CHIP8.V_REG[(CHIP8.opcode & 0x0F00u) >> 8u] = (CHIP8.opcode & 0x00FFu);
-};
+}
 
 /*
     Adds byte to Vx.
@@ -210,7 +210,7 @@ void OP_6XKK()
 void OP_7XKK()
 {
     CHIP8.V_REG[(CHIP8.opcode & 0x0F00u) >> 8u] += (CHIP8.opcode & 0x00FFu);
-};
+}
 
 /*
     Sets Vx to Vy.
@@ -218,7 +218,7 @@ void OP_7XKK()
 void OP_8XY0()
 {
     CHIP8.V_REG[(CHIP8.opcode & 0x0F00u) >> 8u] = CHIP8.V_REG[(CHIP8.opcode & 0x00F0u) >> 4u];
-};
+}
 
 /*
     Sets Vx to Vx OR Vy.
@@ -226,7 +226,7 @@ void OP_8XY0()
 void OP_8XY1()
 {
     CHIP8.V_REG[(CHIP8.opcode & 0x0F00u) >> 8u] |= CHIP8.V_REG[(CHIP8.opcode & 0x00F0u) >> 4u];
-};
+}
 
 /*
     Sets Vx to Vx AND Vy.
@@ -234,7 +234,7 @@ void OP_8XY1()
 void OP_8XY2()
 {
     CHIP8.V_REG[(CHIP8.opcode & 0x0F00u) >> 8u] &= CHIP8.V_REG[(CHIP8.opcode & 0x00F0u) >> 4u];
-};
+}
 
 /*
     Sets Vx to Vx XOR Vy.
@@ -242,7 +242,7 @@ void OP_8XY2()
 void OP_8XY3()
 {
     CHIP8.V_REG[(CHIP8.opcode & 0x0F00u) >> 8u] ^= CHIP8.V_REG[(CHIP8.opcode & 0x00F0u) >> 4u];
-};
+}
 
 /*
     Sums up Vx and Vy and returns 1 if
@@ -255,7 +255,7 @@ void OP_8XY4()
     CHIP8.V_REG[0xF] = Vxy > 255U;
 
     CHIP8.V_REG[Vx] = Vxy & 0xFFu;
-};
+}
 
 /*
     Substracts Vx and Vy depending on which
@@ -268,7 +268,7 @@ void OP_8XY5()
     
     CHIP8.V_REG[0xF] = (CHIP8.V_REG[Vx] >= CHIP8.V_REG[Vy]);
     CHIP8.V_REG[Vx] -= CHIP8.V_REG[Vy];
-};
+}
 
 /*
     Division by 2.
@@ -279,7 +279,7 @@ void OP_8XY6()
 
     CHIP8.V_REG[0xF] = (CHIP8.V_REG[Vx] & 0x1u);
     CHIP8.V_REG[Vx] = CHIP8.V_REG[CHIP8.opcode & 0x00F0u >> 4u] >>  1;
-};
+}
 
 /*
     Substracts Vx and Vy.
@@ -291,7 +291,7 @@ void OP_8XY7()
 
     CHIP8.V_REG[0xF] = (CHIP8.V_REG[Vx] >= CHIP8.V_REG[Vy]);
     CHIP8.V_REG[Vx] = CHIP8.V_REG[Vy] - CHIP8.V_REG[Vx];
-};
+}
 
 /*
     Multiplication by 2.
@@ -302,7 +302,7 @@ void OP_8XYE()
 
     CHIP8.V_REG[0xF] = (CHIP8.V_REG[Vx] & 0x80u) >> 7u;
     CHIP8.V_REG[Vx] = CHIP8.V_REG[CHIP8.opcode & 0x00F0u >> 4u] << 1;
-};
+}
 
 /*
     Skips to the next instruction if Vx and Vy are NOT equal.
@@ -310,7 +310,7 @@ void OP_8XYE()
 void OP_9XY0()
 {
     if (CHIP8.V_REG[(CHIP8.opcode & 0x0F00u) >> 8u] != CHIP8.V_REG[(CHIP8.opcode & 0x00F0u) >> 4u]) CHIP8.PC += 2;
-};
+}
 
 /*
     Sets Index to NNN.
@@ -318,7 +318,7 @@ void OP_9XY0()
 void OP_ANNN()
 {
     CHIP8.I = (CHIP8.opcode & 0x0FFFu);
-};
+}
 
 /*
     Jumps to V0 + NNN.
@@ -326,7 +326,7 @@ void OP_ANNN()
 void OP_BNNN()
 {
     CHIP8.PC = CHIP8.V_REG[0] + (CHIP8.opcode & 0x0FFFu);
-};
+}
 
 /*
     Random number generation AND KK.
@@ -335,7 +335,7 @@ void OP_CXKK()
 {
     uint8_t randomNumber = rand() % 256;
     CHIP8.V_REG[(CHIP8.opcode & 0x0F00u) >> 8u] = (randomNumber & (CHIP8.opcode & 0x00FFu));
-};
+}
 
 /*
     Drawing to the VIDEO_BUFFER
@@ -357,10 +357,10 @@ void OP_DXYN()
             if (x + col >= VIDEO_WIDTH_SIZE) break;
             
             uint32_t* pixel = &CHIP8.VIDEO_BUFFER[(y + row) * VIDEO_WIDTH_SIZE + (x + col)];
-            if (byte & (0x80u >> col)) { if (*pixel == VIDEO_PRIMARY_COLOR) { CHIP8.V_REG[0xF] = 1; }; *pixel ^= VIDEO_PRIMARY_COLOR; };
-        };
-    };
-};
+            if (byte & (0x80u >> col)) { if (*pixel == VIDEO_PRIMARY_COLOR) { CHIP8.V_REG[0xF] = 1; } *pixel ^= VIDEO_PRIMARY_COLOR; }
+        }
+    }
+}
 
 /*
     Check if a key is pressed. Skip to next instruction if yes.
@@ -368,7 +368,7 @@ void OP_DXYN()
 void OP_EX9E()
 {
     if (CHIP8.keypad[CHIP8.V_REG[(CHIP8.opcode & 0x0F00u) >> 8u]]) CHIP8.PC += 2;
-};
+}
 
 /*
     Check if a key is NOT pressed. Skip to next instruction if yes.
@@ -376,7 +376,7 @@ void OP_EX9E()
 void OP_EXA1()
 {
     if (!CHIP8.keypad[CHIP8.V_REG[(CHIP8.opcode & 0x0F00u) >> 8u]]) CHIP8.PC += 2;
-};
+}
 
 /*
     Set Vx to the delayTimer value.
@@ -384,7 +384,7 @@ void OP_EXA1()
 void OP_FX07()
 {
     CHIP8.V_REG[(CHIP8.opcode & 0x0F00u) >> 8u] = CHIP8.delayTimer;
-};
+}
 
 /*
     Listens to the key states. Stores the value of key to the Vx.
@@ -410,7 +410,7 @@ void OP_FX0A()
     else if (CHIP8.keypad[14]) CHIP8.V_REG[Vx] = 14;
     else if (CHIP8.keypad[15]) CHIP8.V_REG[Vx] = 15;
     else CHIP8.PC -= 2;
-};
+}
 
 /*
     Sets delayTimer value to Vx.
@@ -418,7 +418,7 @@ void OP_FX0A()
 void OP_FX15()
 {
     CHIP8.delayTimer = CHIP8.V_REG[(CHIP8.opcode & 0x0F00u) >> 8u];
-};
+}
 
 /*
     Sets soundTimer value to Vx.
@@ -426,7 +426,7 @@ void OP_FX15()
 void OP_FX18()
 {
     CHIP8.soundTimer = CHIP8.V_REG[(CHIP8.opcode & 0x0F00u) >> 8u];
-};
+}
 
 /*
     Adds Vx to the Index.
@@ -434,7 +434,7 @@ void OP_FX18()
 void OP_FX1E()
 {
     CHIP8.I += CHIP8.V_REG[(CHIP8.opcode & 0x0F00u) >> 8u];
-};
+}
 
 /*
     Sets the Index location for the sprite.
@@ -442,7 +442,7 @@ void OP_FX1E()
 void OP_FX29()
 {
     CHIP8.I = FONT_ST_ADD + (5 * CHIP8.V_REG[(CHIP8.opcode & 0x0F00u) >> 8u]);
-};
+}
 
 /*
     Storing of value based on the decimals.
@@ -463,7 +463,7 @@ void OP_FX33()
     CHIP8.MEMORY[CHIP8.I + 2] = val % 10; val /= 10;
     CHIP8.MEMORY[CHIP8.I + 1] = val % 10; val /= 10;
     CHIP8.MEMORY[CHIP8.I] = val % 10;
-};
+}
 
 /*
     Storing every register to memory from the starting index.
@@ -474,7 +474,7 @@ void OP_FX55()
     for (uint8_t i = 0; i <= X; ++i) { CHIP8.MEMORY[CHIP8.I + i] = CHIP8.V_REG[i]; };
     
     CHIP8.I += X + 1;
-};
+}
 
 /*
     Reads every register to memory from the starting index.
@@ -485,13 +485,13 @@ void OP_FX65()
     for (uint8_t i = 0; i <= X; ++i) { CHIP8.V_REG[i] = CHIP8.MEMORY[CHIP8.I + i]; };
 
     CHIP8.I += X + 1;
-};
+}
 
 void OP_NULL() { }; // Dummy instructor, does nothing. Don't delete.
-void Table0() { table0[CHIP8.opcode & 0x000Fu](); };
-void Table8() { table8[CHIP8.opcode & 0x000Fu](); };
-void TableE() { tableE[CHIP8.opcode & 0x000Fu](); };
-void TableF() { tableF[CHIP8.opcode & 0x00FFu](); };
+void Table0() { table0[CHIP8.opcode & 0x000Fu](); }
+void Table8() { table8[CHIP8.opcode & 0x000Fu](); }
+void TableE() { tableE[CHIP8.opcode & 0x000Fu](); }
+void TableF() { tableF[CHIP8.opcode & 0x00FFu](); }
 
 /*
     Sets up the CHIP-8 CPU.
@@ -511,8 +511,8 @@ void initCHIP8()
     CHIP8.PC = PROG_ST_ADD; // 0x200
     memcpy(&CHIP8.MEMORY[FONT_ST_ADD], FONT, FONT_SIZE); // 0x50
 
-    for (size_t i = 0; i <= 0xF; i++) { table0[i] = &OP_NULL; table8[i] = &OP_NULL; tableE[i] = &OP_NULL; };
-    for (size_t i = 0; i <= 0x65; i++) { tableF[i] = &OP_NULL; };
+    for (size_t i = 0; i <= 0xF; i++) { table0[i] = &OP_NULL; table8[i] = &OP_NULL; tableE[i] = &OP_NULL; }
+    for (size_t i = 0; i <= 0x65; i++) { tableF[i] = &OP_NULL; }
 
     table[0x0] = &Table0;
     table[0x1] = &OP_1NNN;
@@ -556,7 +556,7 @@ void initCHIP8()
     tableF[0x33] = &OP_FX33;
     tableF[0x55] = &OP_FX55;
     tableF[0x65] = &OP_FX65;
-};
+}
 
 /*
     CPU Cycle.
@@ -571,7 +571,7 @@ void CHIP8CYCLE()
 
     currentInstruction = CHIP8.opcode & 0xFFFFu;
     table[(CHIP8.opcode & 0xF000u) >> 12]();
-};
+}
 
 /*
     Updates CHIP-8 timers.
@@ -580,6 +580,6 @@ void CHIP8TIMERCYCLE()
 {
     if (CHIP8.delayTimer > 0) --CHIP8.delayTimer;
     if (CHIP8.soundTimer > 0) --CHIP8.soundTimer;
-};
+}
 
 #endif
